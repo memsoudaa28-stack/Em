@@ -388,18 +388,15 @@
 </head>
 <body>
 
-<!-- MUSIQUE -->
 <audio id="birthday-song" preload="auto" loop>
-  <source src="musique-anniversaire.mp3" type="audio/mpeg">
+  <source src="musique-anniversaire.mp3.mp3" type="audio/mpeg">
 </audio>
 
 <div class="overlay"></div>
 <div id="confetti-container"></div>
 
-<!-- BOUTON MUSIQUE -->
 <button class="music-control" id="music-toggle">🎵</button>
 
-<!-- NAVIGATION -->
 <div class="nav">
   <button data-page="1" class="active">J.A galbi</button>
   <button data-page="2">Neb9ik</button>
@@ -407,37 +404,34 @@
 </div>
 
 <div class="page-wrapper">
-  <!-- PAGE 1 -->
   <section class="page active" id="page1">
     <div class="subtitle">Aujourd'hui est ton jour</div>
     <div class="title">Joyeux anniversaire</div>
     <div class="name">Mon amour</div>
     <p class="message">
       Happy birthdayyyyyyy Hayatiiiiii  
-      Clique sur « Neb9ik » pour découvrir un message spécial,  
-      et sur « Souvenirs » pour revivre quelques moments que j'adore avec toi. ❤️
+                  ❤️
     </p>
     <div class="btn-group">
       <button class="btn" id="go-surprise">Voir ✨</button>
     </div>
   </section>
 
-  <!-- PAGE 2 -->
   <section class="page" id="page2">
     <div class="subtitle">L 9le insan v denye</div>
     <h1 class="birthday-header" id="birthday-text"></h1>
     <p class="message">
       Merci d'être celle qui remplit ma vie de rires, de douceur et de paix.  
       Je te promets de toujours te soutenir te faire sourire(leyn yessel7ou seneyk) et t'aimer un peu plus chaque jour ye le gossa  
-     Allah yeje3lou 3am mbarek 3lik inchallah w ywef9ek vih w ya36ik li tetmenay kamel 💖
+      Allah yeje3lou 3am mbarek 3lik inchallah w ywef9ek vih w ya36ik li tetmenay kamel 💖
     </p>
     <div class="btn-group">
       <button class="btn" id="confetti-btn">Lancer 🎉</button>
       <button class="btn secondary" id="kiss-btn">Emali galbi 💋</button>
+      <button class="btn" id="go-to-memories" style="margin-top:10px; background:linear-gradient(45deg,#ff4b8b,#2b002b);">Souvenirs 📸</button>
     </div>
   </section>
 
-  <!-- PAGE 3 : TIMELINE SCROLLABLE -->
   <section class="page" id="page3">
     <div class="subtitle">Notre histoire</div>
     <div class="title">Une belle chronologie</div>
@@ -509,23 +503,18 @@
 <div class="footer-text">Fait avec tout mon amour pour toi ❤️</div>
 
 <script>
-  // MUSIQUE
   const audio = document.getElementById('birthday-song');
   const musicToggle = document.getElementById('music-toggle');
   let musicPlaying = false;
 
-  function initMusic() {
-    musicToggle.textContent = '🎵';
-    musicToggle.classList.remove('paused');
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
+  // Fonction pour démarrer la musique
+  function startMusic() {
+    if (!musicPlaying) {
+      audio.play().then(() => {
         musicPlaying = true;
         musicToggle.textContent = '⏸️';
         musicToggle.classList.add('paused');
-      }).catch(() => {
-        musicToggle.onclick = toggleMusic;
-      });
+      }).catch(e => console.log("Lecture bloquée : " + e));
     }
   }
 
@@ -544,16 +533,7 @@
   }
   musicToggle.onclick = toggleMusic;
 
-  function pauseMusic() {
-    if (musicPlaying) {
-      audio.pause();
-      musicToggle.textContent = '🎵';
-      musicToggle.classList.remove('paused');
-      musicPlaying = false;
-    }
-  }
-
-  // NAVIGATION SIMPLIFIÉE
+  // NAVIGATION
   const navButtons = document.querySelectorAll('.nav button');
   const pages = {
     1: document.getElementById('page1'),
@@ -564,7 +544,6 @@
 
   function showPage(num) {
     if (num === currentPage) return;
-    pauseMusic();
     
     // Cacher ancienne page
     pages[currentPage].classList.remove('active');
@@ -579,11 +558,24 @@
     });
   }
 
+  // Événements
   navButtons.forEach(btn => {
-    btn.addEventListener('click', () => showPage(parseInt(btn.dataset.page)));
+    btn.addEventListener('click', () => {
+        startMusic(); // On essaie de lancer la musique à chaque clic nav
+        showPage(parseInt(btn.dataset.page));
+    });
   });
 
-  document.getElementById('go-surprise').addEventListener('click', () => showPage(2));
+  // Bouton Page 1 -> Page 2
+  document.getElementById('go-surprise').addEventListener('click', () => {
+    startMusic(); // C'est ici que la musique va vraiment se débloquer
+    showPage(2);
+  });
+
+  // Bouton Page 2 -> Page 3
+  document.getElementById('go-to-memories').addEventListener('click', () => {
+    showPage(3);
+  });
 
   // COEURS
   function createHeart() {
@@ -655,8 +647,6 @@
     document.body.appendChild(kiss);
     setTimeout(() => kiss.remove(), 1300);
   });
-
-  window.addEventListener('load', initMusic);
 </script>
 </body>
 </html>
